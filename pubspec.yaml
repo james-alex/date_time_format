@@ -1,6 +1,6 @@
 name: date_time_format
 description: A utility class for formatting DateTimes.
-version: 0.1.0
+version: 0.1.0+1
 homepage: https://github.com/james-alex/date_time_format
 
 environment:
