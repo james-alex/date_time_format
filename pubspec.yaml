@@ -2,14 +2,12 @@ name: date_time_format
 description: >-
   A utility class for formatting Dart's DateTime
   object using standard date/time notation.
-version: 0.1.0+2
+version: 0.1.0+3
 homepage: https://github.com/james-alex/date_time_format
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
 
-dependencies:
-  test: ^1.12.0
-
 dev_dependencies:
+  test: ^1.12.0
   effective_dart: ^1.2.1

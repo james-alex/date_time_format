@@ -42,25 +42,25 @@ print(DateTimeFormat.format(dateTime, format: 'D, M j, H:i'));
 [DateTimeFormat.format]'s `format` parameter supports the following standard
 date/time formatting notations:
 
-`d` : Day of month (01 to 31)
+`d` : Day of month (01 - 31)
 
-`j` : Day of month, without leading 0s (1 to 31)
+`j` : Day of month, without leading 0s (1 - 31)
 
-`D` : An abbreviated textual representation of a day (Mon through Sun)
+`D` : An abbreviated textual representation of a day (Mon - Sun)
 
-`l` : A textual representation of a day (Monday through Sunday)
+`l` : A textual representation of a day (Monday - Sunday)
 
-`S` : Suffix of a day
+`S` : Suffix of a day (st, th, nd)
 
 `z` : The day of the year (starting from 0)
 
-`F` : A textual representation of a month (January through December)
+`F` : A textual representation of a month (January - December)
 
-`M` : An abbreviated textual representation of a month (Jan through Dec)
+`M` : An abbreviated textual representation of a month (Jan - Dec)
 
-`m` : Numeric representation of a month (01 to 12)
+`m` : Numeric representation of a month (01 - 12)
 
-`n` : Numeric representation of a month, without leading 0s (1 to 12)
+`n` : Numeric representation of a month, without leading 0s (1 - 12)
 
 `Y` : Full numeric representation of a year (e.g. 2019)
 
@@ -70,17 +70,17 @@ date/time formatting notations:
 
 `A` : Ante meridiem and post meridiem, uppercase (AM or PM)
 
-`g` : 12-hour format of an hour, without leading 0s (1 through 12)
+`g` : 12-hour format of an hour, without leading 0s (1 - 12)
 
-`h` : 12-hour format of an hour (01 through 12)
+`h` : 12-hour format of an hour (01 - 12)
 
-`G` : 24-hour format of an hour, without leading 0s (0 through 23)
+`G` : 24-hour format of an hour, without leading 0s (0 - 23)
 
-`H` : 24-hour format of an hour (00 through 23)
+`H` : 24-hour format of an hour (00 - 23)
 
-`i` : Minutes
+`i` : Minutes (0 - 59)
 
-`s` : Seconds
+`s` : Seconds (0 - 59)
 
 `v` : Milliseconds (0 - 999)
 
@@ -89,9 +89,9 @@ date/time formatting notations:
 `e` : Timezone identifier (Returns [DateTime.timeZoneName], which is
 provided by the operating system and may be a name or abbreviation.)
 
-`O` : Difference to Greenwich Time (GMT) in hours
+`O` : Difference to Greenwich Time (GMT) in hours (±0000)
 
-`P` : Difference to Greenwich Time (GMT) in hours with a colon
+`P` : Difference to Greenwich Time (GMT) in hours with a colon (±00:00)
 
 `T` : Timezone abbreviation (Identifies the Timezone from
 [DateTime.timeZoneName].)
