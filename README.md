@@ -3,9 +3,13 @@
 [![pub package](https://img.shields.io/pub/v/date_time_format.svg)](https://pub.dartlang.org/packages/date_time_format)
 [![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://github.com/tenhobi/effective_dart)
 
-A utility class for formatting DateTimes.
+A utility class for formatting DateTime objects.
 
 # Usage
+
+```dart
+import 'package:date_time_format/date_time_format.dart';
+```
 
 date_time_format contains 2 classes: [DateTimeFormat], a utility class with a
 single method, [format], which takes a [DateTime] object and returns a human
