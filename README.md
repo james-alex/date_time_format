@@ -9,8 +9,11 @@ A utility class for formatting DateTimes.
 
 date_time_format contains 2 classes: [DateTimeFormat], a utility class with a
 single method, [format], which takes a [DateTime] object and returns a human
-readable [String] representation of the date/time stamp. And, [DateTimeFormats]
-which contains constants representing commonly used date/time formats.
+readable [String] representation of the date/time stamp.
+
+[DateTimeFormats] contains constants representing commonly used date/time
+formats. See the API reference for a list of all formatting constants:
+https://pub.dev/documentation/date_time_format/latest/date_time_format/DateTimeFormats-class.html#constants
 
 ```dart
 final dateTime = DateTime.now();
