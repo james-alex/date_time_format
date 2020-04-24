@@ -155,4 +155,59 @@ class DateTimeFormats {
 
   /// 20191015T194205
   static const String xmlrpcCompact = r'Ymd\THis';
+
+  /// A list of every date/time formatting notation contained within
+  /// the [DateTimeFormats] class.
+  ///
+  /// [w3c] is excluded as it's identical to the [iso8601] format.
+  static const List<String> all = <String>[
+    american,
+    american24Hour,
+    americanAbbr,
+    americanAbbr24Hour,
+    americanAbbrExtended,
+    americanAbbrExtended24Hour,
+    americanDayOfWeekAbbr,
+    americanDayOfWeekAbbr24Hour,
+    americanExtended,
+    americanExtended24Hour,
+    commonLogFormat,
+    cookie,
+    dayOfWeek,
+    dayOfWeek12Hour,
+    dayOfWeek12HourExtended,
+    dayOfWeek24Hour,
+    dayOfWeek24HourExtended,
+    dayOfWeekAbbr,
+    dayOfWeekAbbr12Hour,
+    dayOfWeekAbbr12HourExtended,
+    dayOfWeekAbbr24Hour,
+    dayOfWeekAbbr24HourExtended,
+    dayOfWeekAbbrShort,
+    dayOfWeekAbbrShort12Hour,
+    dayOfWeekAbbrShort24Hour,
+    dayOfWeekShort,
+    european,
+    european12Hour,
+    european12HourExtended,
+    european24Hour,
+    european24HourExtended,
+    europeanAbbr,
+    europeanAbbr12Hour,
+    europeanAbbr12HourExtended,
+    europeanAbbr24Hour,
+    europeanAbbr24HourExtended,
+    exif,
+    iso8601,
+    mySql,
+    rss,
+    soap,
+    soapExtended,
+    time12Hour,
+    time12HourExtended,
+    time24Hour,
+    time24HourExtended,
+    xmlrpc,
+    xmlrpcCompact,
+  ];
 }
