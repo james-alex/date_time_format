@@ -23,6 +23,12 @@ class DateTimeFormats {
   /// Oct 15, 2019 19:42 PST
   static const String americanAbbrExtended24Hour = r'M j, Y H:i T';
 
+  /// Oct 15 2019
+  static const String americanAbbrDate = r'M j Y';
+
+  /// Oct 15 19
+  static const String americanAbbrDateAbbr = r'M j y';
+
   /// Tue, October 15, 2019 7:42 pm
   static const String americanDayOfWeekAbbr = r'D, F j, Y g:i a';
 
@@ -34,6 +40,12 @@ class DateTimeFormats {
 
   /// October 15, 2019 19:42 PST
   static const String americanExtended24Hour = r'F j, Y H:i T';
+
+  /// October 15 2019
+  static const String americanDate = r'F j Y';
+
+  /// October 15 19
+  static const String americanDateAbbr = r'F j y';
 
   /// 15/Oct/2019:19:42:05 -0800
   static const String commonLogFormat = r'd/M/Y:H:i:s O';
@@ -117,6 +129,9 @@ class DateTimeFormats {
   /// 15 Oct 2019 19:42 PST
   static const String europeanAbbr24HourExtended = r'j M Y H:i T';
 
+  /// 15 Oct 19
+  static const String europeanDateAbbr = r'j M y';
+
   /// 2019:10:15 19:42:05
   static const String exif = r'Y:m:d H:i:s';
 
@@ -167,10 +182,14 @@ class DateTimeFormats {
     americanAbbr24Hour,
     americanAbbrExtended,
     americanAbbrExtended24Hour,
+    americanAbbrDate,
+    americanAbbrDateAbbr,
     americanDayOfWeekAbbr,
     americanDayOfWeekAbbr24Hour,
     americanExtended,
     americanExtended24Hour,
+    americanDate,
+    americanDateAbbr,
     commonLogFormat,
     cookie,
     dayOfWeek,
@@ -197,6 +216,7 @@ class DateTimeFormats {
     europeanAbbr12HourExtended,
     europeanAbbr24Hour,
     europeanAbbr24HourExtended,
+    europeanDateAbbr,
     exif,
     iso8601,
     mySql,
