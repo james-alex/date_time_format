@@ -1,3 +1,14 @@
+## [1.0.0] - April 29, 2020
+
+* Added significantly more American and European date/time formatting constants,
+plus additional date-only and time-only formatting constants.
+
+* Split the pre-defined date/time formatting constants into more classes:
+[DateTimeFormats], [DateFormats], [TimeFormats], [AmericanDateFormats],
+[AmericanDateTimeFormats], [EuropeanDateFormats], and [EuropeanDateTimeFormats].
+
+* Added the [relative] method to [DateTimeFormat] to return relative time differences.
+
 ## [0.1.1+1] - April 26, 2020
 
 * Added additional date/time notation constants to [DateTimeFormats].

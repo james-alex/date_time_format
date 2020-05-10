@@ -1,8 +1,9 @@
 name: date_time_format
 description: >-
   A utility class for formatting Dart's DateTime
-  object using standard date/time notation.
-version: 0.1.1+1
+  object using standard date/time notation or as
+  a relative time offset.
+version: 1.0.0
 homepage: https://github.com/james-alex/date_time_format
 
 environment:
