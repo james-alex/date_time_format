@@ -1,5 +1,36 @@
-import './date_time_formats.dart';
+import './date_time_formats/date_time_formats.dart';
 import './helpers/timezones.dart';
+
+/// The different intervals of time that can be counted by the
+/// [DateTimeFormat.relative] method.
+enum UnitOfTime {
+  /// Years
+  year,
+
+  /// Months
+  month,
+
+  /// Weeks
+  week,
+
+  /// Days
+  day,
+
+  /// Hours
+  hour,
+
+  /// Minutes
+  minute,
+
+  /// Seconds
+  second,
+
+  /// Milliseconds
+  millisecond,
+
+  /// Microseconds
+  microsecond,
+}
 
 /// A utility class for formatting [DateTime]s.
 class DateTimeFormat {
@@ -223,6 +254,334 @@ class DateTimeFormat {
     });
 
     return formattedDateTime;
+  }
+
+  /// Formats [dateTime] to a human-readable relative time format.
+  ///
+  /// [relativeTo] defaults to `DateTime.now()`.
+  ///
+  /// If [formatBefore] is not `null`, [dateTime] will be formatted to
+  /// the format specified by [format] if [dateTime] occured before
+  /// [formatBefore].
+  ///
+  /// If [abbr] is `true`, the labels for the units of time (`seconds`,
+  /// `minutes`, `hours`, etc...) will be abbreviated to the first character
+  /// of each label, respectively. If `false`, the entire word will be returned.
+  ///
+  /// If [round] is `true`, units of time will be rounded up to the
+  /// minimum allowed unit of time, as defined by [levelOfPrecision]
+  /// and [minUnitOfTime], see below.
+  ///
+  /// [levelOfPrecision] defines the minimum allowable degree of separation from
+  /// the maximum unit of time counted. I.e. minutes are `1` degree removed from
+  /// hours, and seconds are `2` degrees removed from hours but only `1` degree
+  /// removed from minutes. __Note:__ Weeks will not be counted as a unit of
+  /// time if [excludeWeeks] is `true`, see below.
+  ///
+  /// [minUnitOfTime] is the minimum unit of time that will be included in
+  /// the count. `minUnitOfTime.index` must be `>= maxUnitOfTime.index`.
+  ///
+  /// [maxUnitOfTime] is the maximum unit of time that will be included in
+  /// the count.
+  ///
+  /// If [excludeWeeks] is `true`, weeks won't be counted. Instead, days
+  /// will counted up to their respective month's number of days.
+  ///
+  /// If [prepend] is not `null`, its value will be prepended to the returned
+  /// string. A space (` `) will be inserted after it.
+  ///
+  /// If [append] is not `null`, its value will be appended to the returned
+  /// string. A space (` `) will be inserted before it.
+  static String relative(
+    DateTime dateTime, {
+    DateTime relativeTo,
+    Duration formatAfter,
+    String format = r'g:i a · M j, Y',
+    bool abbr = false,
+    bool round = true,
+    int levelOfPrecision = 0,
+    UnitOfTime minUnitOfTime = UnitOfTime.second,
+    UnitOfTime maxUnitOfTime = UnitOfTime.year,
+    bool excludeWeeks = false,
+    String prepend,
+    String append,
+  }) {
+    assert(dateTime != null);
+    assert(formatAfter == null || format != null);
+    assert(abbr != null);
+    assert(round != null);
+    assert(levelOfPrecision != null);
+    assert(minUnitOfTime != null);
+    assert(maxUnitOfTime != null);
+    assert(minUnitOfTime.index >= maxUnitOfTime.index);
+    assert(excludeWeeks != null);
+
+    relativeTo ??= DateTime.now();
+
+    var difference = dateTime.difference(relativeTo).abs();
+
+    if (formatAfter != null && difference >= formatAfter) {
+      return DateTimeFormat.format(dateTime, format: format);
+    }
+
+    final inverse = relativeTo.isBefore(dateTime);
+
+    var startFrom = inverse ? relativeTo : dateTime;
+
+    int count(
+      Duration duration, [
+      Duration Function(DateTime, bool) setDuration,
+    ]) {
+      var count = 0;
+
+      while (difference >= duration) {
+        count++;
+        difference -= duration;
+        startFrom = startFrom.add(duration);
+        if (setDuration != null) duration = setDuration(startFrom, inverse);
+      }
+
+      return count;
+    }
+
+    void reduce(Duration duration) {
+      if (duration.inMicroseconds > 0) {
+        difference -= duration;
+      }
+    }
+
+    final unitsOfTime = <UnitOfTime, int>{};
+
+    for (var unitOfTime in UnitOfTime.values) {
+      var units = 0;
+
+      if (maxUnitOfTime.index <= unitOfTime.index) {
+        switch (unitOfTime) {
+          case UnitOfTime.year:
+            units = count(_lengthOfYear(startFrom, inverse), _lengthOfYear);
+            break;
+          case UnitOfTime.month:
+            units = count(_lengthOfMonth(startFrom, inverse), _lengthOfMonth);
+            break;
+          case UnitOfTime.week:
+            units = excludeWeeks ? 0 : count(Duration(days: 7));
+            break;
+          case UnitOfTime.day:
+            units = difference.inDays;
+            reduce(Duration(days: units));
+            break;
+          case UnitOfTime.hour:
+            units = difference.inHours;
+            reduce(Duration(hours: units));
+            break;
+          case UnitOfTime.minute:
+            units = difference.inMinutes;
+            reduce(Duration(minutes: units));
+            break;
+          case UnitOfTime.second:
+            units = difference.inSeconds;
+            reduce(Duration(seconds: units));
+            break;
+          case UnitOfTime.millisecond:
+            units = difference.inMilliseconds;
+            reduce(Duration(milliseconds: units));
+            break;
+          case UnitOfTime.microsecond:
+            units = difference.inMicroseconds;
+            break;
+        }
+      }
+
+      unitsOfTime.addAll({unitOfTime: units});
+    }
+
+    final maxUnitOfTimeIndex =
+        unitsOfTime.values.toList().indexWhere((count) => count > 0);
+
+    var minUnitOfTimeIndex = maxUnitOfTimeIndex + levelOfPrecision;
+
+    if (levelOfPrecision > 0) {
+      if (excludeWeeks && minUnitOfTimeIndex >= UnitOfTime.week.index) {
+        minUnitOfTimeIndex++;
+      }
+
+      minUnitOfTimeIndex = minUnitOfTimeIndex.clamp(0, minUnitOfTime.index);
+    }
+
+    for (var unitOfTime in unitsOfTime.keys.toList().reversed) {
+      final lastUnit = unitOfTime.index <= minUnitOfTimeIndex;
+
+      if (round && maxUnitOfTime.index <= unitOfTime.index - 1) {
+        final units = unitsOfTime[unitOfTime];
+
+        switch (unitOfTime) {
+          case UnitOfTime.year:
+            // Years can't be rounded.
+            break;
+          case UnitOfTime.month:
+            if (units >= 12 || (!lastUnit && units >= 6)) {
+              unitsOfTime[UnitOfTime.month] = 0;
+              unitsOfTime[UnitOfTime.year]++;
+            }
+
+            break;
+          case UnitOfTime.week:
+            if (units >= 4 || (!lastUnit && units >= 2)) {
+              unitsOfTime[UnitOfTime.week] = 0;
+              unitsOfTime[UnitOfTime.month]++;
+            }
+
+            break;
+          case UnitOfTime.day:
+            if (excludeWeeks) {
+              var month = (inverse ? dateTime.month : relativeTo.month) - 1;
+              var year = inverse ? dateTime.year : relativeTo.year;
+              if (month == 0) {
+                month = 12;
+                year--;
+              }
+
+              final daysInMonth = _daysInMonth(month, year);
+
+              if (units >= daysInMonth ||
+                  (!lastUnit && units > daysInMonth / 2)) {
+                unitsOfTime[UnitOfTime.day] = 0;
+                unitsOfTime[UnitOfTime.month]++;
+              }
+            } else {
+              if (units >= 7 || (!lastUnit && units >= 4)) {
+                unitsOfTime[UnitOfTime.day] = 0;
+                unitsOfTime[UnitOfTime.week]++;
+              }
+            }
+
+            break;
+          case UnitOfTime.hour:
+            if (units >= 24 || (!lastUnit && units >= 12)) {
+              unitsOfTime[UnitOfTime.hour] = 0;
+              unitsOfTime[UnitOfTime.day]++;
+            }
+
+            break;
+          case UnitOfTime.minute:
+            if (units >= 60 || (!lastUnit && units >= 30)) {
+              unitsOfTime[UnitOfTime.minute] = 0;
+              unitsOfTime[UnitOfTime.hour]++;
+            }
+
+            break;
+          case UnitOfTime.second:
+            if (units >= 60 || (!lastUnit && units >= 30)) {
+              unitsOfTime[UnitOfTime.second] = 0;
+              unitsOfTime[UnitOfTime.minute]++;
+            }
+
+            break;
+          case UnitOfTime.millisecond:
+            if (units >= 1000 || (!lastUnit && units >= 500)) {
+              unitsOfTime[UnitOfTime.millisecond] = 0;
+              unitsOfTime[UnitOfTime.second]++;
+            }
+
+            break;
+          case UnitOfTime.microsecond:
+            if (units >= 1000 || (!lastUnit && units >= 500)) {
+              unitsOfTime[UnitOfTime.microsecond] = 0;
+              unitsOfTime[UnitOfTime.millisecond]++;
+            }
+
+            break;
+        }
+      }
+
+      if (lastUnit) break;
+
+      unitsOfTime.remove(unitOfTime);
+    }
+
+    unitsOfTime.removeWhere((key, value) => value == 0);
+
+    var formattedString = _formatUnits(unitsOfTime, abbr);
+
+    if (prepend != null) formattedString = '$prepend $formattedString';
+    if (append != null) formattedString = '$formattedString $append';
+
+    return formattedString;
+  }
+
+  /// Formats every unit of time included in [units] in sequential order with
+  /// the [_formatUnit] method, separating each unit with a space (` `).
+  static String _formatUnits(Map<UnitOfTime, int> units, bool abbr) {
+    assert(units != null);
+
+    var formattedString = '';
+
+    units.forEach((key, value) {
+      final unit = _formatUnit(key, value, abbr);
+
+      if (formattedString.isNotEmpty) formattedString += ' ';
+
+      formattedString += unit;
+    });
+
+    return formattedString;
+  }
+
+  /// Formats a [unit] of time as a human-readable string.
+  static String _formatUnit(UnitOfTime unit, int count, bool abbr) {
+    assert(unit != null);
+    assert(count != null);
+    assert(abbr != null);
+
+    var label = unit.toString().split('.').last;
+
+    if (abbr) {
+      label = label.substring(0, 1);
+      if (unit == UnitOfTime.microsecond) label += 'u';
+      if (unit == UnitOfTime.millisecond) label += 's';
+    } else {
+      label = ' $label';
+      if (count > 1) label += 's';
+    }
+
+    return '$count$label';
+  }
+
+  /// Returns the length of the year represented by [dateTime] as a [Duration].
+  static Duration _lengthOfYear(DateTime dateTime, bool inverse) {
+    assert(dateTime != null);
+    assert(inverse != null);
+
+    var duration = Duration(days: 365);
+
+    if (_isLeapYear(dateTime.year)) {
+      final dayOfYear = _dayOfYear(dateTime);
+
+      if ((!inverse && dayOfYear >= 59) || (inverse && dayOfYear < 59)) {
+        duration += Duration(days: 1);
+      }
+    }
+
+    return duration;
+  }
+
+  /// Returns the length of the month represented by [dateTime] as a [Duration].
+  static Duration _lengthOfMonth(DateTime dateTime, bool inverse) {
+    assert(dateTime != null);
+    assert(inverse != null);
+
+    var month = inverse ? dateTime.month - 1 : dateTime.month;
+    var year = dateTime.year;
+
+    if (month == 0) {
+      month = 12;
+      year -= 1;
+    } else if (month == 13) {
+      month = 1;
+      year += 1;
+    }
+
+    return Duration(days: _daysInMonth(month, year));
   }
 
   /// Returns the name of the day of the week, abbreviated if [abbr] is `true`.
