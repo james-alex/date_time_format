@@ -270,7 +270,8 @@ class DateTimeFormat {
   ///
   /// If [round] is `true`, units of time will be rounded up to the
   /// minimum allowed unit of time, as defined by [levelOfPrecision]
-  /// and [minUnitOfTime], see below.
+  /// and [minUnitOfTime], see below. If `false`, values below the
+  /// minimum allowed unit of time will be truncated.
   ///
   /// [levelOfPrecision] defines the minimum allowable degree of separation from
   /// the maximum unit of time counted. I.e. minutes are `1` degree removed from
@@ -286,6 +287,10 @@ class DateTimeFormat {
   ///
   /// If [excludeWeeks] is `true`, weeks won't be counted. Instead, days
   /// will counted up to their respective month's number of days.
+  ///
+  /// If [ifNow] is supplied, the value of [ifNow] will be returned in the
+  /// event the difference is less than the smallest allowed interval of time,
+  /// otherwise an empty string will be returned.
   ///
   /// If [prepend] is not `null`, its value will be prepended to the returned
   /// string. A space (` `) will be inserted after it.
@@ -303,6 +308,7 @@ class DateTimeFormat {
     UnitOfTime minUnitOfTime = UnitOfTime.second,
     UnitOfTime maxUnitOfTime = UnitOfTime.year,
     bool excludeWeeks = false,
+    String ifNow,
     String prepend,
     String append,
   }) {
@@ -502,6 +508,10 @@ class DateTimeFormat {
     unitsOfTime.removeWhere((key, value) => value == 0);
 
     var formattedString = _formatUnits(unitsOfTime, abbr);
+
+    if (ifNow != null && formattedString.isEmpty) {
+      return ifNow;
+    }
 
     if (prepend != null) formattedString = '$prepend $formattedString';
     if (append != null) formattedString = '$formattedString $append';
