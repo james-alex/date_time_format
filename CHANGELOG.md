@@ -1,4 +1,8 @@
-## [1.0.0] - April 29, 2020
+## [1.0.0+1] - May 30, 2020
+
+* Added sub-heads to the README.
+
+## [1.0.0] - May 30, 2020
 
 * Added significantly more American and European date/time formatting constants,
 plus additional date-only and time-only formatting constants.
