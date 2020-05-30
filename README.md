@@ -226,9 +226,8 @@ print(DateTimeFormat.relative(dateTime.add(Duration(days: 5)),
     prependIfBefore: 'In', appendIfAfter: 'ago'));
 ```
 
-The [ifNow] parameter can be set to return a value if there is no measurable difference
-within the constrained range of units of time. If left `null`, an empty string will be
-returned instead.
+The [ifNow] parameter can be set to return a value if the difference in time is less
+than [minUnitOfTime], otherwise, an empty string will be returned.
 
 ```dart
 // Now
