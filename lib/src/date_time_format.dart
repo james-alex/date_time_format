@@ -292,16 +292,16 @@ class DateTimeFormat {
   /// event the difference is less than the smallest allowed interval of time,
   /// otherwise an empty string will be returned.
   ///
-  /// If [prepend] is not `null`, its value will be prepended to the returned
-  /// string. A space (` `) will be inserted after it.
+  /// If [prependIfBefore] is not `null` and [dateTime] occurs before
+  /// [relativeTo], its value will be prepended to the returned string.
   ///
-  /// If [append] is not `null`, its value will be appended to the returned
-  /// string. A space (` `) will be inserted before it.
+  /// If [appendIfAfter] is not `null` and [dateTime] occurs after
+  /// [relativeTo], its value will be appended to the returned string.
   static String relative(
     DateTime dateTime, {
     DateTime relativeTo,
     Duration formatAfter,
-    String format = r'g:i a · M j, Y',
+    String format = AmericanDateTimeFormats.abbrWithComma,
     bool abbr = false,
     bool round = true,
     int levelOfPrecision = 0,
@@ -309,8 +309,8 @@ class DateTimeFormat {
     UnitOfTime maxUnitOfTime = UnitOfTime.year,
     bool excludeWeeks = false,
     String ifNow,
-    String prepend,
-    String append,
+    String prependIfBefore,
+    String appendIfAfter,
   }) {
     assert(dateTime != null);
     assert(formatAfter == null || format != null);
@@ -333,6 +333,10 @@ class DateTimeFormat {
     final inverse = relativeTo.isBefore(dateTime);
 
     var startFrom = inverse ? relativeTo : dateTime;
+
+    if (difference < _minUnitOfTime(minUnitOfTime, startFrom, inverse)) {
+      return ifNow ?? '';
+    }
 
     int count(
       Duration duration, [
@@ -359,7 +363,7 @@ class DateTimeFormat {
     final unitsOfTime = <UnitOfTime, int>{};
 
     for (var unitOfTime in UnitOfTime.values) {
-      var units = 0;
+      int units;
 
       if (maxUnitOfTime.index <= unitOfTime.index) {
         switch (unitOfTime) {
@@ -509,14 +513,59 @@ class DateTimeFormat {
 
     var formattedString = _formatUnits(unitsOfTime, abbr);
 
-    if (ifNow != null && formattedString.isEmpty) {
-      return ifNow;
+    if (prependIfBefore != null && dateTime.isBefore(relativeTo)) {
+      formattedString = '$prependIfBefore $formattedString';
     }
 
-    if (prepend != null) formattedString = '$prepend $formattedString';
-    if (append != null) formattedString = '$formattedString $append';
+    if (appendIfAfter != null && dateTime.isAfter(relativeTo)) {
+      formattedString = '$formattedString $appendIfAfter';
+    }
 
     return formattedString;
+  }
+
+  static Duration _minUnitOfTime(
+    UnitOfTime unitOfTime,
+    DateTime dateTime,
+    bool inverse,
+  ) {
+    assert(unitOfTime != null);
+    assert(dateTime != null);
+    assert(inverse != null);
+
+    Duration duration;
+
+    switch (unitOfTime) {
+      case UnitOfTime.year:
+        duration = _lengthOfYear(dateTime, inverse);
+        break;
+      case UnitOfTime.month:
+        duration = _lengthOfMonth(dateTime, inverse);
+        break;
+      case UnitOfTime.week:
+        duration = Duration(days: 7);
+        break;
+      case UnitOfTime.day:
+        duration = Duration(days: 1);
+        break;
+      case UnitOfTime.hour:
+        duration = Duration(hours: 1);
+        break;
+      case UnitOfTime.minute:
+        duration = Duration(minutes: 1);
+        break;
+      case UnitOfTime.second:
+        duration = Duration(seconds: 1);
+        break;
+      case UnitOfTime.millisecond:
+        duration = Duration(milliseconds: 1);
+        break;
+      case UnitOfTime.microsecond:
+        duration = Duration(microseconds: 1);
+        break;
+    }
+
+    return duration;
   }
 
   /// Formats every unit of time included in [units] in sequential order with
