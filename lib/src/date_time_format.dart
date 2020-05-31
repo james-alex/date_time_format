@@ -513,11 +513,11 @@ class DateTimeFormat {
 
     var formattedString = _formatUnits(unitsOfTime, abbr);
 
-    if (prependIfBefore != null && dateTime.isBefore(relativeTo)) {
+    if (prependIfBefore != null && dateTime.isAfter(relativeTo)) {
       formattedString = '$prependIfBefore $formattedString';
     }
 
-    if (appendIfAfter != null && dateTime.isAfter(relativeTo)) {
+    if (appendIfAfter != null && dateTime.isBefore(relativeTo)) {
       formattedString = '$formattedString $appendIfAfter';
     }
 
