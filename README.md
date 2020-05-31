@@ -7,9 +7,9 @@ A utility class for formatting Dart's DateTime object using
 standard date/time notation or as a relative time offset.
 
 __Updating to v1.0.0:__ The names and locations of many of the original
-constants have been changed follow more consistent naming conventions and
-to be more organized. See the bottom of this README for notes on the updated
-constants if you were using any of those affected.
+constants have been changed to follow more consistent naming conventions
+and to be better organized. See the bottom of this README for notes on the
+updated constants if you were using any of those affected.
 
 # Usage
 
@@ -85,7 +85,7 @@ print(DateTimeFormat.relative(dateTime.subtract(Duration(days: 9)),
 
 
 
-<big>__Abbreviating:__</big>
+### __Abbreviating:__
 
 The returned intervals of time can be abbreviated by setting the
 [abbr] parameter to `true`.
@@ -114,7 +114,7 @@ print(DateTimeFormat.relative(timeOffset1);
 print(DateTimeFormat.relative(timeOffset1, relativeTo: timeOffset2));
 ```
 
-<big>__Level of Precision:__</big>
+### __Level of Precision:__
 
 The [levelOfPrecision] parameter sets the degrees of removal from the largest
 interval counted that will be included in the count. I.e. minutes are `1`
@@ -137,7 +137,7 @@ print(DateTimeFormat.relative(timeOffset, levelOfPrecision: 2));
 print(DateTimeFormat.relative(timeOffset, levelOfPrecision: 3));
 ```
 
-<big>__Minimum & Maximum Units of Time:__</big>
+### __Minimum & Maximum Units of Time:__
 
 The minimum and maximum intervals to include in the count can be specified by
 the [minUnitOfTime] and [maxUnitOfTime] respectively. The largest possible
@@ -180,7 +180,7 @@ print(DateTimeFormat.relative(timeOffset, levelOfPrecision: 8,
     minUnitOfTime: UnitOfTime.microsecond, abbr: true));
 ```
 
-<big>__Rounding:__</big>
+### __Rounding:__
 
 Rounding, which is enabled by default, can be disabled by setting the [round]
 parameter to `false`, in which case any measure of time that isn't included
@@ -196,7 +196,7 @@ print(DateTimeFormat.relative(timeOffset));
 print(DateTimeFormat.relative(timeOffset, round: false));
 ```
 
-<big>__Formatting After X Amount of Time:__</big>
+### __Formatting After X Amount of Time:__
 
 [formatAfter] can be set to a [Duration] of time to return a standard formatted
 date/time stamp, via the [DateTimeFormat.format] method, if the difference in
@@ -219,7 +219,7 @@ print(DateTimeFormat.relative(timeOffset, formatAfter: Duration(days: 365),
     format: r'g:i a · M j, Y'));
 ```
 
-<big>__Prepending & Appending Text:__</big>
+### __Prepending & Appending Text:__
 
 [prependIfBefore] and [appendIfAfter] can be used to conveniently prepend and/or append a
 [String] before or after the returned relative time offset if the formatted [DateTime] occurs
@@ -235,7 +235,7 @@ print(DateTimeFormat.relative(dateTime.add(Duration(days: 5)),
     prependIfBefore: 'In', appendIfAfter: 'ago'));
 ```
 
-<big>__Return X Below Minimum Unit of Time:__</big>
+### __Return X Below Minimum Unit of Time:__
 
 The [ifNow] parameter can be set to return a value if the difference in time is less
 than [minUnitOfTime], otherwise, an empty string will be returned.
