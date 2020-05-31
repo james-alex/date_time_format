@@ -226,11 +226,11 @@ print(DateTimeFormat.relative(timeOffset, formatAfter: Duration(days: 365),
 before or after [relativeTo] (which defaults to `DateTime.now()`), respectively.
 
 ```dart
-// In 5 days
+// 5 days ago
 print(DateTimeFormat.relative(dateTime.subtract(Duration(days: 5)),
     prependIfBefore: 'In', appendIfAfter: 'ago'));
 
-// 5 days ago
+// In 5 days
 print(DateTimeFormat.relative(dateTime.add(Duration(days: 5)),
     prependIfBefore: 'In', appendIfAfter: 'ago'));
 ```
