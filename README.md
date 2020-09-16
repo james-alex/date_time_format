@@ -61,10 +61,6 @@ print(DateTimeFormat.format(dateTime, format: 'D, M j, H:i'));
 By default, [DateTimeFormat.relative] returns the time offset rounded to the nearest
 whole unit of time.
 
-__Note:__ Weeks can be excluded as an interval of time by setting the
-[excludeWeeks] parameter to `true`, and will not be counted as a degree
-of time in regards to [levelOfPrecision].
-
 ```dart
 // 5 minutes
 print(DateTimeFormat.relative(dateTime.subtract(Duration(minutes: 5))));
@@ -82,8 +78,6 @@ print(DateTimeFormat.relative(dateTime.subtract(Duration(days: 9))));
 print(DateTimeFormat.relative(dateTime.subtract(Duration(days: 9)),
     excludeWeeks: true));
 ```
-
-
 
 ### __Abbreviating:__
 
@@ -120,6 +114,10 @@ The [levelOfPrecision] parameter sets the degrees of removal from the largest
 interval counted that will be included in the count. I.e. minutes are `1`
 degree removed from hours, and seconds are `2` degrees removed from hours but
 only `1` degree removed from minutes.
+
+__Note:__ Weeks can be excluded as an interval of time by setting the
+[excludeWeeks] parameter to `true`, and will not be counted as a degree
+of time in regards to [levelOfPrecision].
 
 ```dart
 final timeOffset = dateTime.add(Duration(days: 3, hours: 6, minutes: 30, seconds: 15));
