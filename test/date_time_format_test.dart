@@ -17,10 +17,19 @@ void main() {
     DateTime.utc(2026, 12, 7),
   ];
 
-  test('Validate Constants', () {
+  test('Utility Method Test', () {
     _testValues.forEach((format, expectedValues) {
       for (var i = 0; i < dateTimes.length; i++) {
         final result = DateTimeFormat.format(dateTimes[i], format: format);
+        expect(expectedValues[i], equals(result));
+      }
+    });
+  });
+
+  test('Extension Method Test', () {
+    _testValues.forEach((format, expectedValues) {
+      for (var i = 0; i < dateTimes.length; i++) {
+        final result = dateTimes[i].format(format);
         expect(expectedValues[i], equals(result));
       }
     });

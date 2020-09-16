@@ -1,15 +1,9 @@
 # date_time_format
 
 [![pub package](https://img.shields.io/pub/v/date_time_format.svg)](https://pub.dartlang.org/packages/date_time_format)
-[![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://github.com/tenhobi/effective_dart)
 
-A utility class for formatting Dart's DateTime object using
-standard date/time notation or as a relative time offset.
-
-__Updating to v1.0.0:__ The names and locations of many of the original
-constants have been changed to follow more consistent naming conventions
-and to be better organized. See the bottom of this README for notes on the
-updated constants if you were using any of those affected.
+A utility class, and extension methods, for formatting Dart's [DateTime]
+object using standard date/time notation or as a relative time offset.
 
 # Usage
 
@@ -17,10 +11,13 @@ updated constants if you were using any of those affected.
 import 'package:date_time_format/date_time_format.dart';
 ```
 
-date_time_format exposes a utility class, [DateTimeFormat] that contains
-two methods: [format] and [relative], that format [DateTime] objects as defined
-by standard date/time notation or as relative to the current or a provided
-[DateTime], respectively.
+date_time_format exposes 2 utility methods, [format] and [relative], that
+are added to the [DateTime] class as extension methods or can be accessed
+via the [DateTimeFormat] utility class.
+
+[format] and [relative] format [DateTime] objects as defined by standard
+date/time notation or as relative to the current or a provided [DateTime],
+respectively.
 
 See the `Date/Time Notations` section below for a complete list of supported
 formatting notations.
@@ -35,24 +32,31 @@ formatting constants can be found in the [AmericanDateFormats](https://pub.dev/d
 
 ## Standard Formatting
 
-[DateTimeFormat.format] defaults to the ISO8601 date/time format.
+__Note:__ Each example below shows the extension method being utilized, and
+the utility method being used on the next line. Both methods will return the
+same output.
 
 ```dart
 final dateTime = DateTime.now();
 
 // 2019-10-15T19:42:05-08:00
+print(dateTime.format());
 print(DateTimeFormat.format(dateTime));
 
 // October 15, 2019 7:42 pm
+print(dateTime.format(DateTimeFormats.american));
 print(DateTimeFormat.format(dateTime, format: DateTimeFormats.american));
 
 // 15/Oct/2019:19:42:05 -0700
+print(dateTime.format(DateTimeFormats.commonLogFormat));
 print(DateTimeFormat.format(dateTime, format: DateTimeFormats.commonLogFormat));
 
 // Tuesday, October 15, 2019
+print(dateTime.format(AmericanDateFormats.dayOfWeek));
 print(DateTimeFormat.format(dateTime, format: AmericanDateFormats.dayOfWeek));
 
 // Tue, Oct 15, 19:42
+print(dateTime.format('D, M j, H:i'));
 print(DateTimeFormat.format(dateTime, format: 'D, M j, H:i'));
 ```
 
@@ -79,6 +83,29 @@ print(DateTimeFormat.relative(dateTime.subtract(Duration(days: 9)),
     excludeWeeks: true));
 ```
 
+[relative] can also be called as an extension method on [DateTime].
+
+```dart
+final dateTime = DateTime.now().subtract(Duration(minutes: 5));
+
+// 5 minutes
+print(dateTime.relative());
+
+// 5 minutes ago
+print(dateTime.relative(appendIfAfter: 'ago'));
+
+// 5 minutes
+print(dateTime.relative(to: DateTime.now().subtract(Duration(minutes: 10))));
+
+// In 5 minutes
+print(dateTime.relative(
+    to: DateTime.now().subtract(Duration(minutes: 10)),
+    prependIfBefore: 'In'));
+```
+
+All of the parameters detailed on the [DateTimeFormat.relative] are also
+provided on the [DateTime.relative] extension method.
+
 ### __Abbreviating:__
 
 The returned intervals of time can be abbreviated by setting the
@@ -102,7 +129,7 @@ final timeOffset1 = dateTime.subtract(Duration(minutes: 5));
 final timeOffset2 = dateTime.add(Duration(minutes: 5));
 
 // 5 minutes
-print(DateTimeFormat.relative(timeOffset1);
+print(DateTimeFormat.relative(timeOffset1));
 
 // 10 minutes
 print(DateTimeFormat.relative(timeOffset1, relativeTo: timeOffset2));

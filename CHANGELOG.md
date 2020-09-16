@@ -1,3 +1,7 @@
+## [1.1.0] - September 16, 2020
+
+* Added the [format] and [relative] extension methods to [DateTime].
+
 ## [1.0.0] - May 30, 2020
 
 * Added significantly more American and European date/time formatting constants,
