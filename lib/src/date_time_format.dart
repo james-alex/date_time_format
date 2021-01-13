@@ -107,15 +107,12 @@ class DateTimeFormat {
     DateTime dateTime, {
     String format = DateTimeFormats.iso8601,
   }) {
-    assert(dateTime != null);
-    assert(format != null);
-
     var formattedDateTime = '';
 
     var nextCharacterIsEscaped = false;
 
     format.split('').forEach((notation) {
-      String value;
+      String? value;
 
       if (nextCharacterIsEscaped) {
         nextCharacterIsEscaped = false;
@@ -299,8 +296,8 @@ class DateTimeFormat {
   /// [relativeTo], its value will be appended to the returned string.
   static String relative(
     DateTime dateTime, {
-    DateTime relativeTo,
-    Duration formatAfter,
+    DateTime? relativeTo,
+    Duration? formatAfter,
     String format = AmericanDateTimeFormats.abbrWithComma,
     bool abbr = false,
     bool round = true,
@@ -308,19 +305,11 @@ class DateTimeFormat {
     UnitOfTime minUnitOfTime = UnitOfTime.second,
     UnitOfTime maxUnitOfTime = UnitOfTime.year,
     bool excludeWeeks = false,
-    String ifNow,
-    String prependIfBefore,
-    String appendIfAfter,
+    String? ifNow,
+    String? prependIfBefore,
+    String? appendIfAfter,
   }) {
-    assert(dateTime != null);
-    assert(formatAfter == null || format != null);
-    assert(abbr != null);
-    assert(round != null);
-    assert(levelOfPrecision != null);
-    assert(minUnitOfTime != null);
-    assert(maxUnitOfTime != null);
     assert(minUnitOfTime.index >= maxUnitOfTime.index);
-    assert(excludeWeeks != null);
 
     relativeTo ??= DateTime.now();
 
@@ -340,7 +329,7 @@ class DateTimeFormat {
 
     int count(
       Duration duration, [
-      Duration Function(DateTime, bool) setDuration,
+      Duration Function(DateTime, bool)? setDuration,
     ]) {
       var count = 0;
 
@@ -363,7 +352,7 @@ class DateTimeFormat {
     final unitsOfTime = <UnitOfTime, int>{};
 
     for (var unitOfTime in UnitOfTime.values) {
-      int units;
+      var units = 0;
 
       if (maxUnitOfTime.index <= unitOfTime.index) {
         switch (unitOfTime) {
@@ -407,7 +396,7 @@ class DateTimeFormat {
 
     final maxUnitOfTimeIndex = unitsOfTime.values
         .toList()
-        .indexWhere((count) => count != null && count > 0);
+        .indexWhere((count) => count > 0);
 
     var minUnitOfTimeIndex = maxUnitOfTimeIndex + levelOfPrecision;
 
@@ -419,27 +408,38 @@ class DateTimeFormat {
       minUnitOfTimeIndex = minUnitOfTimeIndex.clamp(0, minUnitOfTime.index);
     }
 
+    // Increase the value assocaited with [unit] in [unitsOfTime] by `1`.
+    void increaseUnitOfTime(UnitOfTime unit) {
+      if (unitsOfTime.containsKey(unit)) {
+        unitsOfTime[unit] = (unitsOfTime[unit] ?? 0) + 1;
+      } else {
+        unitsOfTime.addAll({unit: 1});
+      }
+    }
+
     for (var unitOfTime in unitsOfTime.keys.toList().reversed) {
       final lastUnit = unitOfTime.index <= minUnitOfTimeIndex;
 
       if (round && maxUnitOfTime.index <= unitOfTime.index - 1) {
         final units = unitsOfTime[unitOfTime];
 
+
+
         switch (unitOfTime) {
           case UnitOfTime.year:
             // Years can't be rounded.
             break;
           case UnitOfTime.month:
-            if (units >= 12 || (!lastUnit && units >= 6)) {
+            if (units! >= 12 || (!lastUnit && units >= 6)) {
               unitsOfTime[UnitOfTime.month] = 0;
-              unitsOfTime[UnitOfTime.year]++;
+              increaseUnitOfTime(UnitOfTime.year);
             }
 
             break;
           case UnitOfTime.week:
-            if (units >= 4 || (!lastUnit && units >= 2)) {
+            if (units! >= 4 || (!lastUnit && units >= 2)) {
               unitsOfTime[UnitOfTime.week] = 0;
-              unitsOfTime[UnitOfTime.month]++;
+              increaseUnitOfTime(UnitOfTime.month);
             }
 
             break;
@@ -454,51 +454,51 @@ class DateTimeFormat {
 
               final daysInMonth = _daysInMonth(month, year);
 
-              if (units >= daysInMonth ||
+              if (units! >= daysInMonth ||
                   (!lastUnit && units > daysInMonth / 2)) {
                 unitsOfTime[UnitOfTime.day] = 0;
-                unitsOfTime[UnitOfTime.month]++;
+                increaseUnitOfTime(UnitOfTime.month);
               }
             } else {
-              if (units >= 7 || (!lastUnit && units >= 4)) {
+              if (units! >= 7 || (!lastUnit && units >= 4)) {
                 unitsOfTime[UnitOfTime.day] = 0;
-                unitsOfTime[UnitOfTime.week]++;
+                increaseUnitOfTime(UnitOfTime.week);
               }
             }
 
             break;
           case UnitOfTime.hour:
-            if (units >= 24 || (!lastUnit && units >= 12)) {
+            if (units! >= 24 || (!lastUnit && units >= 12)) {
               unitsOfTime[UnitOfTime.hour] = 0;
-              unitsOfTime[UnitOfTime.day]++;
+              increaseUnitOfTime(UnitOfTime.day);
             }
 
             break;
           case UnitOfTime.minute:
-            if (units >= 60 || (!lastUnit && units >= 30)) {
+            if (units! >= 60 || (!lastUnit && units >= 30)) {
               unitsOfTime[UnitOfTime.minute] = 0;
-              unitsOfTime[UnitOfTime.hour]++;
+              increaseUnitOfTime(UnitOfTime.hour);
             }
 
             break;
           case UnitOfTime.second:
-            if (units >= 60 || (!lastUnit && units >= 30)) {
+            if (units! >= 60 || (!lastUnit && units >= 30)) {
               unitsOfTime[UnitOfTime.second] = 0;
-              unitsOfTime[UnitOfTime.minute]++;
+              increaseUnitOfTime(UnitOfTime.minute);
             }
 
             break;
           case UnitOfTime.millisecond:
-            if (units >= 1000 || (!lastUnit && units >= 500)) {
+            if (units! >= 1000 || (!lastUnit && units >= 500)) {
               unitsOfTime[UnitOfTime.millisecond] = 0;
-              unitsOfTime[UnitOfTime.second]++;
+              increaseUnitOfTime(UnitOfTime.second);
             }
 
             break;
           case UnitOfTime.microsecond:
-            if (units >= 1000 || (!lastUnit && units >= 500)) {
+            if (units! >= 1000 || (!lastUnit && units >= 500)) {
               unitsOfTime[UnitOfTime.microsecond] = 0;
-              unitsOfTime[UnitOfTime.millisecond]++;
+              increaseUnitOfTime(UnitOfTime.millisecond);
             }
 
             break;
@@ -510,7 +510,7 @@ class DateTimeFormat {
       unitsOfTime.remove(unitOfTime);
     }
 
-    unitsOfTime.removeWhere((key, value) => value == null || value == 0);
+    unitsOfTime.removeWhere((key, value) => value == 0);
 
     var formattedString = _formatUnits(unitsOfTime, abbr);
 
@@ -530,11 +530,7 @@ class DateTimeFormat {
     DateTime dateTime,
     bool inverse,
   ) {
-    assert(unitOfTime != null);
-    assert(dateTime != null);
-    assert(inverse != null);
-
-    Duration duration;
+    late Duration duration;
 
     switch (unitOfTime) {
       case UnitOfTime.year:
@@ -572,8 +568,6 @@ class DateTimeFormat {
   /// Formats every unit of time included in [units] in sequential order with
   /// the [_formatUnit] method, separating each unit with a space (` `).
   static String _formatUnits(Map<UnitOfTime, int> units, bool abbr) {
-    assert(units != null);
-
     var formattedString = '';
 
     units.forEach((key, value) {
@@ -589,10 +583,6 @@ class DateTimeFormat {
 
   /// Formats a [unit] of time as a human-readable string.
   static String _formatUnit(UnitOfTime unit, int count, bool abbr) {
-    assert(unit != null);
-    assert(count != null);
-    assert(abbr != null);
-
     var label = unit.toString().split('.').last;
 
     if (abbr) {
@@ -609,9 +599,6 @@ class DateTimeFormat {
 
   /// Returns the length of the year represented by [dateTime] as a [Duration].
   static Duration _lengthOfYear(DateTime dateTime, bool inverse) {
-    assert(dateTime != null);
-    assert(inverse != null);
-
     var duration = Duration(days: 365);
 
     if (_isLeapYear(dateTime.year)) {
@@ -627,9 +614,6 @@ class DateTimeFormat {
 
   /// Returns the length of the month represented by [dateTime] as a [Duration].
   static Duration _lengthOfMonth(DateTime dateTime, bool inverse) {
-    assert(dateTime != null);
-    assert(inverse != null);
-
     var month = inverse ? dateTime.month - 1 : dateTime.month;
     var year = dateTime.year;
 
@@ -650,10 +634,9 @@ class DateTimeFormat {
   ///
   /// The week starts from Monday.
   static String _dayOfWeek(int dayOfWeek, bool abbr) {
-    assert(dayOfWeek != null && dayOfWeek >= 1 && dayOfWeek <= 7);
-    assert(abbr != null);
+    assert(dayOfWeek >= 1 && dayOfWeek <= 7);
 
-    String nameOfDay;
+    late String nameOfDay;
 
     switch (dayOfWeek) {
       case 1:
@@ -686,10 +669,9 @@ class DateTimeFormat {
   ///
   /// [month] must be in the range of `1-12`.
   static String _month(int month, bool abbr) {
-    assert(month != null && month >= 1 && month <= 12);
-    assert(abbr != null);
+    assert(month >= 1 && month <= 12);
 
-    String nameOfMonth;
+    late String nameOfMonth;
 
     switch (month) {
       case 1:
@@ -735,8 +717,6 @@ class DateTimeFormat {
 
   /// Returns the day of the year starting from 0.
   static int _dayOfYear(DateTime dateTime) {
-    assert(dateTime != null);
-
     var dayOfYear = dateTime.day;
 
     final month = dateTime.month;
@@ -751,10 +731,9 @@ class DateTimeFormat {
 
   /// Returns the number of days in [month].
   static int _daysInMonth(int month, int year) {
-    assert(month != null && month >= 1 && month <= 12);
-    assert(year != null);
+    assert(month >= 1 && month <= 12);
 
-    int days;
+    late int days;
 
     switch (month) {
       case 1:
@@ -799,16 +778,10 @@ class DateTimeFormat {
   }
 
   /// Returns `true` if [year] is a leap year, otherwise returns `false`.
-  static bool _isLeapYear(int year) {
-    assert(year != null);
-
-    return year % 100 == 0 ? year % 400 == 0 : year % 4 == 0;
-  }
+  static bool _isLeapYear(int year) => year % 100 == 0 ? year % 400 == 0 : year % 4 == 0;
 
   /// Returns the suffix (`st`, `nd`, `rd`, or `th`) of [day].
   static String _suffixOfDay(int day) {
-    assert(day != null);
-
     if (day == 1 || day == 21 || day == 31) {
       return 'st';
     } else if (day == 2 || day == 22) {
@@ -825,9 +798,6 @@ class DateTimeFormat {
   /// If [colon] is `true`, a colon (`:`) will be included between the hours
   /// and minutes of the offset.
   static String _timeZoneOffset(Duration offset, [bool colon = false]) {
-    assert(offset != null);
-    assert(colon != null);
-
     final hours = offset.inHours;
     final minutes = offset.inMinutes.abs() - (hours.abs() * 60);
 
@@ -840,8 +810,6 @@ class DateTimeFormat {
   /// Attempts to parse [dateTime.timeZoneName] and returns the corresponding
   /// abbreviation if one can be identified, otherwise returns a UTC offset.
   static String _timeZoneAbbreviation(DateTime dateTime) {
-    assert(dateTime != null);
-
     if (dateTime.timeZoneOffset.inSeconds == 0) {
       return 'GMT';
     }
@@ -862,18 +830,16 @@ class DateTimeFormat {
       return dateTime.timeZoneName;
     }
 
-    String timeZoneAbbreviation;
+    String? timeZoneAbbreviation;
 
     for (var timeZoneId in TimeZones.identifiers.keys) {
       if (timeZoneId == timeZoneName) {
-        timeZoneAbbreviation = TimeZones.identifiers[timeZoneId];
+        timeZoneAbbreviation = TimeZones.identifiers[timeZoneId]!;
         break;
       }
     }
 
-    if (timeZoneAbbreviation == null) {
-      return 'UTC${_timeZoneOffset(dateTime.timeZoneOffset)}';
-    }
+    timeZoneAbbreviation ??= 'UTC${_timeZoneOffset(dateTime.timeZoneOffset)}';
 
     return timeZoneAbbreviation;
   }

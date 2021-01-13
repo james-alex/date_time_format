@@ -1,3 +1,7 @@
+## [0.2.0-nullsafety] - January 13, 2021
+
+* Migrated to null-safe code.
+
 ## [1.1.1] - January 12, 2021
 
 * Bug fix regarding the max unit of time shown by a [relative] format.

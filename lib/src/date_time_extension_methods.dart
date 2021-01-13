@@ -71,11 +71,8 @@ extension DateTimeFormatter on DateTime {
   /// `\` : Escape character
   ///
   /// __See:__ [DateTimeFormats] for common formatting notations.
-  String format([String format = DateTimeFormats.iso8601]) {
-    assert(format != null);
-
-    return DateTimeFormat.format(this, format: format);
-  }
+  String format([String format = DateTimeFormats.iso8601]) =>
+      DateTimeFormat.format(this, format: format);
 
   /// Formats `this` to a human-readable relative time format, relative to [to].
   ///
@@ -119,8 +116,8 @@ extension DateTimeFormatter on DateTime {
   /// If [appendIfAfter] is not `null` and [dateTime] occurs after
   /// [relativeTo], its value will be appended to the returned string.
   String relative({
-    DateTime to,
-    Duration formatAfter,
+    DateTime? to,
+    Duration? formatAfter,
     String format = AmericanDateTimeFormats.abbrWithComma,
     bool abbr = false,
     bool round = true,
@@ -128,18 +125,11 @@ extension DateTimeFormatter on DateTime {
     UnitOfTime minUnitOfTime = UnitOfTime.second,
     UnitOfTime maxUnitOfTime = UnitOfTime.year,
     bool excludeWeeks = false,
-    String ifNow,
-    String prependIfBefore,
-    String appendIfAfter,
+    String? ifNow,
+    String? prependIfBefore,
+    String? appendIfAfter,
   }) {
-    assert(formatAfter == null || format != null);
-    assert(abbr != null);
-    assert(round != null);
-    assert(levelOfPrecision != null);
-    assert(minUnitOfTime != null);
-    assert(maxUnitOfTime != null);
     assert(minUnitOfTime.index >= maxUnitOfTime.index);
-    assert(excludeWeeks != null);
 
     return DateTimeFormat.relative(
       this,
