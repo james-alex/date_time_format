@@ -1,3 +1,7 @@
+## [1.1.1] - January 12, 2021
+
+* Bug fix regarding the max unit of time shown by a [relative] format.
+
 ## [1.1.0] - September 16, 2020
 
 * Added the [format] and [relative] extension methods to [DateTime].
