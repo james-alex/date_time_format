@@ -405,8 +405,9 @@ class DateTimeFormat {
       unitsOfTime.addAll({unitOfTime: units});
     }
 
-    final maxUnitOfTimeIndex =
-        unitsOfTime.values.toList().indexWhere((count) => count > 0);
+    final maxUnitOfTimeIndex = unitsOfTime.values
+        .toList()
+        .indexWhere((count) => count != null && count > 0);
 
     var minUnitOfTimeIndex = maxUnitOfTimeIndex + levelOfPrecision;
 
@@ -509,7 +510,7 @@ class DateTimeFormat {
       unitsOfTime.remove(unitOfTime);
     }
 
-    unitsOfTime.removeWhere((key, value) => value == 0);
+    unitsOfTime.removeWhere((key, value) => value == null || value == 0);
 
     var formattedString = _formatUnits(unitsOfTime, abbr);
 
