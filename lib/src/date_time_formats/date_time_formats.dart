@@ -80,17 +80,17 @@ class DateTimeFormats {
   /// A list of every date/time formatting notation contained within
   /// the [DateTimeFormats] class.
   static final List<String> all = <String>[
-    commonLogFormat,
-    cookie,
-    exif,
-    iso8601,
-    mySql,
-    rss,
-    soap,
-    soapExtended,
-    xmlrpc,
-    xmlrpcCompact,
-  ]
-    ..addAll(AmericanDateTimeFormats.all)
-    ..addAll(EuropeanDateTimeFormats.all);
+        commonLogFormat,
+        cookie,
+        exif,
+        iso8601,
+        mySql,
+        rss,
+        soap,
+        soapExtended,
+        xmlrpc,
+        xmlrpcCompact,
+      ] +
+      AmericanDateTimeFormats.all +
+      EuropeanDateTimeFormats.all;
 }
