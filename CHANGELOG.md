@@ -1,4 +1,4 @@
-## [0.2.0-nullsafety] - January 13, 2021
+## [2.0.0-nullsafety] - January 13, 2021
 
 * Migrated to null-safe code.
 
