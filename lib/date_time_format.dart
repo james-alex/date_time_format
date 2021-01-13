@@ -1,3 +1,5 @@
+/// Utilities for formatting Dart's DateTime object using standard
+/// date/time notation or as a relative time offset.
 library date_time_format;
 
 export './src/date_time_extension_methods.dart';
