@@ -2,7 +2,7 @@ name: date_time_format
 description: >-
   Utilities for formatting Dart's DateTime object using standard
   date/time notation or as a relative time offset.
-version: 0.2.0-nullsafety
+version: 2.0.0-nullsafety
 homepage: https://github.com/james-alex/date_time_format
 
 environment:
