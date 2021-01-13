@@ -394,9 +394,8 @@ class DateTimeFormat {
       unitsOfTime.addAll({unitOfTime: units});
     }
 
-    final maxUnitOfTimeIndex = unitsOfTime.values
-        .toList()
-        .indexWhere((count) => count > 0);
+    final maxUnitOfTimeIndex =
+        unitsOfTime.values.toList().indexWhere((count) => count > 0);
 
     var minUnitOfTimeIndex = maxUnitOfTimeIndex + levelOfPrecision;
 
@@ -422,8 +421,6 @@ class DateTimeFormat {
 
       if (round && maxUnitOfTime.index <= unitOfTime.index - 1) {
         final units = unitsOfTime[unitOfTime];
-
-
 
         switch (unitOfTime) {
           case UnitOfTime.year:
@@ -778,7 +775,8 @@ class DateTimeFormat {
   }
 
   /// Returns `true` if [year] is a leap year, otherwise returns `false`.
-  static bool _isLeapYear(int year) => year % 100 == 0 ? year % 400 == 0 : year % 4 == 0;
+  static bool _isLeapYear(int year) =>
+      year % 100 == 0 ? year % 400 == 0 : year % 4 == 0;
 
   /// Returns the suffix (`st`, `nd`, `rd`, or `th`) of [day].
   static String _suffixOfDay(int day) {
