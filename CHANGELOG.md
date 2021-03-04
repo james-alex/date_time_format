@@ -1,3 +1,7 @@
+## [2.0.0] - March 3, 2021
+
+* Merge null-safe branch into main branch.
+
 ## [2.0.0-nullsafety] - January 13, 2021
 
 * Migrated to null-safe code.
