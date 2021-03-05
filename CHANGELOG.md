@@ -1,3 +1,13 @@
+## [2.0.1] - March 4, 2021
+
+* Added the [abbreviations] parameter to [relative] to allow custom
+abbreviations to be provided.
+
+* Changed the default abbreviation for months from `m` to `mo` to
+differentiate it from minutes.
+
+* Changed the default abbreviation for microseconds from `mu` to `μs`.
+
 ## [2.0.0] - March 3, 2021
 
 * Merge null-safe branch into main branch.
