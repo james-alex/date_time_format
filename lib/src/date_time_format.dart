@@ -261,14 +261,18 @@ class DateTimeFormat {
   /// the format specified by [format] if [dateTime] occured before
   /// [formatBefore].
   ///
-  /// If [abbr] is `true`, the labels for the units of time (`seconds`,
-  /// `minutes`, `hours`, etc...) will be abbreviated to the first character
-  /// of each label, respectively. If `false`, the entire word will be returned.
-  ///
   /// If [round] is `true`, units of time will be rounded up to the
   /// minimum allowed unit of time, as defined by [levelOfPrecision]
   /// and [minUnitOfTime], see below. If `false`, values below the
   /// minimum allowed unit of time will be truncated.
+  ///
+  /// If [abbr] is `true`, the labels for the units of time (`seconds`,
+  /// `minutes`, `hours`, etc...) will be abbreviated to the first character
+  /// of each label, respectively. If `false`, the entire word will be returned.
+  ///
+  /// A map of [abbreviations] can be provided to supply custom abbreviations
+  /// to use for any unit of time. The abbreviations will only be applied if
+  /// [abbr] is `true`.
   ///
   /// [levelOfPrecision] defines the minimum allowable degree of separation from
   /// the maximum unit of time counted. I.e. minutes are `1` degree removed from
@@ -299,8 +303,9 @@ class DateTimeFormat {
     DateTime? relativeTo,
     Duration? formatAfter,
     String format = AmericanDateTimeFormats.abbrWithComma,
-    bool abbr = false,
     bool round = true,
+    bool abbr = false,
+    Map<UnitOfTime, String>? abbreviations,
     int levelOfPrecision = 0,
     UnitOfTime minUnitOfTime = UnitOfTime.second,
     UnitOfTime maxUnitOfTime = UnitOfTime.year,
@@ -509,7 +514,7 @@ class DateTimeFormat {
 
     unitsOfTime.removeWhere((key, value) => value == 0);
 
-    var formattedString = _formatUnits(unitsOfTime, abbr);
+    var formattedString = _formatUnits(unitsOfTime, abbr, abbreviations);
 
     if (prependIfBefore != null && dateTime.isAfter(relativeTo)) {
       formattedString = '$prependIfBefore $formattedString';
@@ -564,14 +569,16 @@ class DateTimeFormat {
 
   /// Formats every unit of time included in [units] in sequential order with
   /// the [_formatUnit] method, separating each unit with a space (` `).
-  static String _formatUnits(Map<UnitOfTime, int> units, bool abbr) {
+  static String _formatUnits(
+    Map<UnitOfTime, int> units,
+    bool abbr,
+    Map<UnitOfTime, String>? abbreviations,
+  ) {
     var formattedString = '';
 
     units.forEach((key, value) {
-      final unit = _formatUnit(key, value, abbr);
-
+      final unit = _formatUnit(key, value, abbr, abbreviations);
       if (formattedString.isNotEmpty) formattedString += ' ';
-
       formattedString += unit;
     });
 
@@ -579,13 +586,26 @@ class DateTimeFormat {
   }
 
   /// Formats a [unit] of time as a human-readable string.
-  static String _formatUnit(UnitOfTime unit, int count, bool abbr) {
+  static String _formatUnit(
+    UnitOfTime unit,
+    int count,
+    bool abbr,
+    Map<UnitOfTime, String>? abbreviations,
+  ) {
     var label = unit.toString().split('.').last;
 
     if (abbr) {
-      label = label.substring(0, 1);
-      if (unit == UnitOfTime.microsecond) label += 'u';
-      if (unit == UnitOfTime.millisecond) label += 's';
+      if (abbreviations?.keys.contains(unit) == true) {
+        label = abbreviations![unit]!;
+      } else if (unit == UnitOfTime.month) {
+        label = 'mo';
+      } else if (unit == UnitOfTime.millisecond) {
+        label = 'ms';
+      } else if (unit == UnitOfTime.microsecond) {
+        label = 'μs';
+      } else {
+        label = label.substring(0, 1);
+      }
     } else {
       label = ' $label';
       if (count > 1) label += 's';
